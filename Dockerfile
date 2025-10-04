@@ -13,4 +13,4 @@ RUN composer install --no-dev --optimize-autoloader
 COPY src/ ./src/
 COPY examples/ ./examples/
 
-CMD ["src/bin/mononoke", "/app/examples/sns.php"]
+ENTRYPOINT ["src/bin/mononoke"]

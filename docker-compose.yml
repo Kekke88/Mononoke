@@ -13,8 +13,11 @@ services:
       - "localstack_data:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
 
-  service:
-    image: mononoke
+  mononoke:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mononoke
     restart: on-failure
     tty: true
     depends_on:
@@ -24,14 +27,16 @@ services:
       - "80:80"
       - "443:443"
     environment:
-      AWS_REGION: us-east-1
-      AWS_ACCESS_KEY_ID: test
-      AWS_SECRET_ACCESS_KEY: test
-      AWS_ENDPOINT_URL: http://localstack:4566
-      XDEBUG_MODE: debug
-      XDEBUG_CLIENT_HOST: host.docker.internal
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - XDEBUG_MODE=debug
+      - XDEBUG_CLIENT_HOST=host.docker.internal
+      - SERVICE_FILE=sns.php
     volumes:
       - ./src/:/app/src/
+    command: ["/app/src/bin/mononoke /app/examples/${SERVICE_FILE:-sns.php}"]
 
 volumes:
   localstack_data:
